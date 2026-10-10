@@ -37,10 +37,17 @@ void Grid::fitColumns(void)
     int available = grid->GetGridWindow()->GetClientSize().x;
     int fixed = 0;
     int flexible = 0;
-    for (int width : widths) width > 0 ? fixed += width : ++flexible;
+    for (size_t column = 0; column < widths.size(); ++column) {
+        if (column == 0 && !numberColumnVisible) continue;
+        widths[column] > 0 ? fixed += widths[column] : ++flexible;
+    }
     int remaining = std::max(60 * flexible, available - fixed);
     int pending = flexible;
     for (size_t column = 0; column < widths.size(); ++column) {
+        if (column == 0 && !numberColumnVisible) {
+            grid->HideCol(0);
+            continue;
+        }
         if (widths[column] > 0) grid->SetColSize(static_cast<int>(column), widths[column]);
         else {
             int width = pending == 1 ? remaining : remaining / pending;
@@ -99,6 +106,13 @@ void Grid::setColumnWidth(int column, int width)
 {
     if (!grid || column < 0 || column + 1 >= grid->GetNumberCols()) return;
     widths[column + 1] = std::max(0, width);
+    fitColumns();
+}
+
+void Grid::setNumberColumnVisible(bool visible)
+{
+    if (!grid || numberColumnVisible == visible) return;
+    numberColumnVisible = visible;
     fitColumns();
 }
 

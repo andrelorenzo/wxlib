@@ -303,6 +303,7 @@ public:
   void setReturnToNeutral(bool enable, int axis = 0);
   void showValue(bool show = true);
   uint16_t getValue(int axis = 0);
+  void setChangeHandler(std::function<void(uint16_t)> handler);
   void enable(void);
   void disable(void);
 
@@ -310,6 +311,7 @@ private:
   wxPanel *panel = nullptr;
   SliderBar *slider = nullptr;
   JoystickPad *joystick = nullptr;
+  std::function<void(uint16_t)> changeHandler_;
 };
 
 class Tab {
@@ -388,6 +390,7 @@ public:
     wxString getText(int row, int column);
     void setEditable(int column, bool editable = true);
     void setColumnWidth(int column, int width = 0);
+    void setNumberColumnVisible(bool visible);
     void setColor(int row, int column, wxColour color);
     void deleteRow(int row);
     int getSelectedRow(void);
@@ -400,6 +403,7 @@ private:
     wxGrid *grid = nullptr;
     std::vector<int> widths;
     std::vector<bool> editable;
+    bool numberColumnVisible = true;
 };
 
 void customConfig(Container &win, Data *configs, size_t len, const wxString *names = nullptr, int channels = 1, int width = LENGTH_EDIT);
